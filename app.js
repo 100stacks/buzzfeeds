@@ -1,8 +1,31 @@
 //
 // app.js 
 //
+// 
 
-var app = angular.module('buzzFeeder', []);
+var app = angular.module('buzzNewsFeeder', ['ui.router']);	// adding an external module as a dependency in our app
+															// NOTE: We are using 'ui-router' instead of Angular's built-in 'ngRoute'
+															// 	as it is newer and provides more flexibility and features.
+
+
+app.config([
+	'$stateProvider',
+	'$urlRouterProvider',
+	function ($stateProvider, $urlRouterProvider) {
+		
+		// app config block used to configure a *home* state using $stateProvider and $urlRouterProvider,
+		// 	use otherwise() to redirect unspecified routes
+
+		$stateProvider
+			.state('home', {
+				url: '/home',
+				templateUrl: '/home.html',
+				controller: 'MainCtrl'
+			});
+
+		$urlRouterProvider.otherwise('home');
+
+	}]);
 
 app.factory('posts', [function() {
 	// posts - service body
@@ -21,7 +44,6 @@ app.controller('MainCtrl', [
 	'$scope',
 	'posts',							// inject the 'posts' service into our controller so we can access its data
 	function ($scope, posts) {
-		$scope.test = "Hello from Buzz Feeder!";
 
 		$scope.posts = posts.posts;		// now any change or modification made to $scope.posts will be stored in the service,
 										// and immediately accessible by any other module that injects the posts service. 
