@@ -19,7 +19,7 @@ app.controller('MainCtrl', [
 
 		$scope.addPost = function() {
 
-			if (!$scope.title || $scope.title === '') {
+			if (!$scope.title || $scope.title === '') {  	// do not add an empty title
 				return;
 			}
 
