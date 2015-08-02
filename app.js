@@ -23,7 +23,7 @@ app.config([
 				controller: 'MainCtrl'
 			})
 			.state('posts', {
-				url: '/posts/{id}',
+				url: '/posts/{id}',					// {id} - is a route parameter that gets passed to PostCtrl 
 				templateUrl: '/posts.html',
 				controller: 'PostsCtrl'
 			});
@@ -51,7 +51,8 @@ app.controller('MainCtrl', [
 	function ($scope, posts) {
 
 		$scope.posts = posts.posts;		// now any change or modification made to $scope.posts will be stored in the service,
-										// and immediately accessible by any other module that injects the posts service. 
+										// the 'posts' factory (posts.posts), and with two-way binding data-binding this
+										// makes it immediately accessible by any other module that injects the posts service. 
 
 		// $scope.posts = [
 		// 	{ title: 'Post 1', upvotes: 5 },
@@ -69,7 +70,11 @@ app.controller('MainCtrl', [
 
 			$scope.posts.push({ title: $scope.title,
 								link: $scope.link, 
-								upvotes:0 });
+								upvotes:0,
+								comments: [
+									{ author: 'Joey', body: 'Great post!', upvotes: 0 },
+									{ author: 'Bob', body: 'Great idea but its not feasible!', upvotes: 0 }
+								] });
 
 			$scope.title = ''; 
 			$scope.link = '';
@@ -85,10 +90,10 @@ app.controller('PostsCtrl', [
 	'$scope',
 	'$stateParams',
 	'posts',
-	function($scope, $stateParams, posts)
+	function($scope, $stateParams, posts) {
 
-	// Posts Controller
+		// Posts Controller
 
-	
+		$scope.post = posts.posts[$stateParams.id];			// display the post based on its 'id'
 
-	])
+	}]);
