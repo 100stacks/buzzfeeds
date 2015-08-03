@@ -1,3 +1,31 @@
+/*
+    Express app.js 
+*/
+
+
+/* Register Posts Schema + Comments Schema with the global *mongoose* object after require()ing,
+   it can now be used to interact with the NEWS db anywhere else *mongoose* db object is imported 
+
+  NOTE: If you run into this error:
+
+     throw new mongoose.Error.MissingSchemaError(name);
+            ^
+      MissingSchemaError: Schema hasn't been registered for model "Post".
+        Use mongoose.model(name, schema) at Mongoose.model
+
+  - The schemas need to be registered before "var routes = require('./routes/index');"
+  
+    http://stackoverflow.com/questions/20832126/missingschemaerror-schema-hasnt-been-registered-for-model-user
+*/
+
+var mongoose = require('mongoose');
+require('./models/Posts');
+require('./models/Comments'); 
+
+mongoose.connect('mongodb://localhost/news');
+
+
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -8,28 +36,22 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var app = express();
 
-// register Posts model with the global *mongoose* object after require()ing,
-// it can now be used to interact with the NEWS db anywhere else *mongoose* is imported 
-var mongoose = require('mongoose');
-require('./models/Posts');
-require('./models/Comments'); 
-
-mongoose.connect('mongodb://localhost/news');
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// uncomment after placing your favicon in /public
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
 app.use('/', routes);
 app.use('/users', users);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
