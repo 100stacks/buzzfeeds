@@ -31,13 +31,15 @@
 	<!-- Angular Inline Template - using this syntax we can create Angular templates inside our HTML 
 			and reference them in JavaScript 
 	-->
+	<!-- <div ng-repeat="~~~"> below append '-' to 'upvotes' for descending order 'upvotes' for ascending -->
+
 	<script type="text/ng-template" id="/home.html">
 
 			<div class="page-header">
 				<h1>Buzz News Feeder</h1>
 			</div>
 
-			<div ng-repeat="post in posts | orderBy: '-upvotes'">   <!-- append '-' to 'upvotes' for descending order 'upvotes' for ascending -->
+			<div ng-repeat="post in posts | orderBy: '-upvotes'">   
 
 				<span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(post)"></span>
 				{{ post.upvotes }}
@@ -81,7 +83,7 @@
 			</h3>
 		</div>
 
-		<div ng-repeat="commment in posts.comments | orderBy: '-upvotes'">
+		<div ng-repeat="comment in post.comments | orderBy:'-upvotes'">
 			<span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpVotes(comment)"></span>
 			{{ comment.upvotes }} - by {{ comment.author }}
 			<span style="font-size:20px; margin-left:10px;">
@@ -89,8 +91,24 @@
 			</span>
 		</div>
 
+		<form ng-submit="addComment()" style="margin-top:30px;">
+			<h3>Add a new comment</h3>
+
+			<div class="form-group">
+				<input type="text" class="form-control" placeholder="Enter a comment" ng-model="body"></input>
+			</div>
+			<button type="submit" class="btn btn-primary">Post</button>
+		</form>
 
 	</script>
 
 </body>
 </html>
+
+
+
+
+
+
+
+

@@ -74,7 +74,8 @@ app.controller('MainCtrl', [
 								comments: [
 									{ author: 'Joey', body: 'Great post!', upvotes: 0 },
 									{ author: 'Bob', body: 'Great idea but its not feasible!', upvotes: 0 }
-								] });
+								]
+			});
 
 			$scope.title = ''; 
 			$scope.link = '';
@@ -95,5 +96,51 @@ app.controller('PostsCtrl', [
 		// Posts Controller
 
 		$scope.post = posts.posts[$stateParams.id];			// display the post based on its 'id'
+		console.log('PostsCtrl - post:', $scope.post);
+
+		// Allow users to add comments to posts
+
+		$scope.addComment = function() {
+			console.log('PostsCtrl - addComment()');
+			console.log('comment - ', $scope.body);
+
+			if ($scope.body === '') {						// blank comment, don't add to post comments section
+				return;
+			}
+
+			$scope.post.comments.push({
+				body: $scope.body,
+				author: 'user',
+				upvotes: 0
+			});
+
+			$scope.body = '';
+		};
+
+		$scope.incrementUpvotes = function(comment) {
+			console.log('incrementUpvotes in PostsCtrl', comment)
+			post.comments[comment].upvotes++ ;
+		}
 
 	}]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
