@@ -69,4 +69,37 @@ router.post('/posts', function(request, response, next) {
 	});
 });
 
+/* Preload objects - We can use Express's param() function to automatically load an object, rather
+	than duplicating the same code across several different request handler functions. */ 
+
+router.param('post', function(request, response, next, id) {
+	var query = Post.findById(id);
+
+	query.exec(function(err, post) {
+		if (err) {
+			return next(err);
+		}
+
+		if (!post) {
+			return next(new Error('Post not found'));
+		}
+
+		request.post = post;
+		return next();
+	});
+
+});
+
+router.get('/posts/:post', function(request, response) {
+	response.json(request.post);
+})
+
 module.exports = router;
+
+
+
+
+
+
+
+
