@@ -83,7 +83,7 @@ router.param('comment', function(request, response, next, id) {
 
 /* GET home page. */
 router.get('/', function(request, response, next) {
-  res.render('index', { title: 'Buzz News Feeder' });
+  response.render('index', { title: 'Buzz News Feeder' });
 });
 
 /* GET all posts in a JSON list */
@@ -123,10 +123,10 @@ router.get('/posts/:post', function(request, response, next) {
 		if (err) {
 			return next(err);
 		}
+	
+		response.json(post);
 	});
-
-	response.json(post);
-})
+});
 
 /* Upvote a Post */
 router.put('/posts/:post/upvote', function(request, response, next) {

@@ -1,7 +1,8 @@
-//
-// app.js 
-//
-// 
+/*
+ 	AngularApp.js
+
+	The logic for the Angular Application (app.js)
+*/
 
 var app = angular.module('buzzNewsFeeder', ['ui.router']);	// adding an external module as a dependency in our app
 															// NOTE: We are using 'ui-router' instead of Angular's built-in 'ngRoute'
@@ -20,25 +21,72 @@ app.config([
 			.state('home', {
 				url: '/home',
 				templateUrl: '/home.html',
-				controller: 'MainCtrl'
-			})
+				controller: 'MainCtrl',
+				resolve: {
+					postPromise: ['posts', function(posts) {
+						return posts.getAll();
+					}]
+				}
+			});
+
+		$stateProvider	
 			.state('posts', {
-				url: '/posts/{id}',					// {id} - is a route parameter that gets passed to PostCtrl 
+				url: '/posts/{id}',					// {id} - is a route parameter that gets passed to PostCtrl (the MondoDB _id)
 				templateUrl: '/posts.html',
-				controller: 'PostsCtrl'
+				controller: 'PostsCtrl',
+				resolve: {
+					post: ['$stateParams', 'posts', function($stateParams, posts) {
+						return posts.get($stateParams.id);
+					}]
+				}
 			});
 
 		$urlRouterProvider.otherwise('home');
 
 	}]);
 
-app.factory('posts', [function() {
-	// posts - service body
+/* Post Service */
+app.factory('posts', ['$http', function($http) {
 	// 		- refactoring our $scope.posts variable into service
 	//     	- we are using a Factory instead of Service or Provider (http://tylermcginnis.com/angularjs-factory-vs-service-vs-provider/)
 
 	var obj = {
 		posts: []
+	};
+
+	obj.getAll = function() {
+		return $http.get('/posts').success(function(data) {
+			angular.copy(data, obj.posts);							// angular.copy() creates a DEEP copy of the returned data
+		});															// 	Ensures $scope.posts is updated in MainCtrl so all new data
+	};																//	will also be updated in the view 
+
+	obj.get = function(id) {
+		return $http.get('/posts/' + id).then(function(response) {
+			return response.data;
+		});
+	};
+
+	obj.create = function(post) {
+		return $http.post('/posts', post).success(function(data) {	// success() function allows us to bind a function that will
+			obj.posts.push(data);									// 	be executed when the request returns
+		});  
+	};
+
+	obj.upvote = function(post) {
+		return $http.put('/posts/' + post._id + '/upvote').success(function(data) {
+			post.upvotes += 1;
+		});
+	};
+
+	obj.addComment = function(id, comment) {
+		return $http.post('/posts/' + id + '/comments', comment);
+	};
+
+	obj.upvoteComment = function(post, comment) {
+		return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote')
+						.success(function(data) {
+							comment.upvotes += 1;
+		});
 	};
 
 	return obj;
@@ -64,38 +112,45 @@ app.controller('MainCtrl', [
 
 		$scope.addPost = function() {
 
-			if (!$scope.title || $scope.title === '') {  	// do not add an empty title
+			if (!$scope.title || $scope.title === '') {  	// do not add an empty Post
 				return;
 			}
 
-			$scope.posts.push({ title: $scope.title,
-								link: $scope.link, 
-								upvotes:0,
-								comments: [
-									{ author: 'Joey', body: 'Great post!', upvotes: 0 },
-									{ author: 'Bob', body: 'Great idea but its not feasible!', upvotes: 0 }
-								]
+			posts.create({
+				title: $scope.title,
+				link: $scope.link
 			});
+
+			// $scope.posts.push({ title: $scope.title,
+			// 					link: $scope.link, 
+			// 					upvotes:0,
+			// 					comments: [
+			// 						{ author: 'Joey', body: 'Great post!', upvotes: 0 },
+			// 						{ author: 'Bob', body: 'Great idea but its not feasible!', upvotes: 0 }
+			// 					]
+			// });
 
 			$scope.title = ''; 
 			$scope.link = '';
 		};
 
 		$scope.incrementUpvotes = function(post) {
-			post.upvotes += 1;
-		}
+			posts.upvote(post);
+
+			// posts.upvotes += 1;
+		};
 
 	}]);
 
 app.controller('PostsCtrl', [
 	'$scope',
-	'$stateParams',
 	'posts',
-	function($scope, $stateParams, posts) {
+	'post',
+	function($scope, posts, post) {
 
 		// Posts Controller
 
-		$scope.post = posts.posts[$stateParams.id];			// display the post based on its 'id'
+		$scope.post = post;									
 		console.log('PostsCtrl - post:', $scope.post);
 
 		// Allow users to add comments to posts
@@ -108,39 +163,22 @@ app.controller('PostsCtrl', [
 				return;
 			}
 
-			$scope.post.comments.push({
+			posts.addComment(post._id, {
 				body: $scope.body,
 				author: 'user',
-				upvotes: 0
+			}).success(function(comment) {
+				$scope.post.comments.push(comment);
 			});
 
 			$scope.body = '';
+	
 		};
 
-		$scope.incrementUpvotes = function(comment) {
-			console.log('incrementUpvotes in PostsCtrl', comment)
-			post.comments[comment].upvotes++ ;
-		}
+		$scope.incrementCommentUpvotes = function(comment) {
+			console.log('**upvoteComment - incrementUpvotes for ', comment);
+			posts.upvoteComment(post, comment);
+		};
 
 	}]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
