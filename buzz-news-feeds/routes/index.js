@@ -62,6 +62,25 @@ router.param('post', function(request, response, next, id) {
 
 });
 
+/* Comment middleware function to automatically retrieve comments by the :comment route parameter */
+router.param('comment', function(request, response, next, id) {
+	var query = Comment.findById(id);
+
+	query.exec(function(err, post) {
+		if (err) {
+			return next(err);
+		}
+
+		if (!post) {
+			return next(new Error('Comment not found'));
+		}
+
+		request.post = post;
+		return next();
+	});
+
+});
+
 /* GET home page. */
 router.get('/', function(request, response, next) {
   res.render('index', { title: 'Buzz News Feeder' });
@@ -97,9 +116,16 @@ router.post('/posts', function(request, response, next) {
 	});
 });
 
-/* Return a SINGLE Post */
-router.get('/posts/:post', function(request, response) {
-	response.json(request.post);
+/* Return a SINGLE Post with any associated Comments */
+router.get('/posts/:post', function(request, response, next) {
+	request.post.populate('comments', function(err,post) {			// Use the populate() function to retrieve comments 
+
+		if (err) {
+			return next(err);
+		}
+	});
+
+	response.json(post);
 })
 
 /* Upvote a Post */
@@ -132,8 +158,19 @@ router.post('/posts/:post/comments', function(request, response, next) {
 			response.json(comment);
 		});
 	});
-	
+
  });
+
+/* Upvote a Comment for a Post */
+router.put('/posts/:post/comments/:comment/upvote', function(request, response, next) {
+	request.post.upvote(function(err, post) {
+		if (err) {
+			return next(err);
+		}
+
+		response.json(post);
+	});
+});
 
 module.exports = router;
 

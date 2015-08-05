@@ -17,4 +17,9 @@
 	});																// 	the ID references and enables us to retrieve both
 																	// 	items simultaneously
 
+	CommentSchema.methods.upvote = function(cb) {
+		this.upvotes += 1;
+		this.save(cb);
+	};
+	
 	mongoose.model('Comment', CommentSchema);
