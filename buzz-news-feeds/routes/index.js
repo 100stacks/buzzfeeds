@@ -97,10 +97,21 @@ router.post('/posts', function(request, response, next) {
 	});
 });
 
-
+/* Return a SINGLE Post */
 router.get('/posts/:post', function(request, response) {
 	response.json(request.post);
 })
+
+router.put('/posts/:post/upvote', function(request, response, next) {
+	request.post.upvote(function(err, post) {
+		if (err) {
+			return next(err);
+		}
+
+		response.json(post);
+	});
+});
+
 
 module.exports = router;
 
