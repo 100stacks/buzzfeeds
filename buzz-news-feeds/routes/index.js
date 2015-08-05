@@ -34,9 +34,37 @@ var mongoose = require('mongoose');				// import *mongoose* object (our db)
 var Post = mongoose.model('Post');				// instantiate a handle to Post model
 var Comment = mongoose.model('Comment');		// instantiate a handle to Comment model
 
+/* Preload objects - We can use Express's param() function to automatically load an object, rather
+	than duplicating the same code across several different request handler functions. 
+
+	- we define a route URL with :post 
+	- assuming our :post parameter contains an ID, our callback function will retrieve the post object
+		from the database, and attach it to the to request object
+	- then, the router handler function will be called
+
+*/ 
+
+router.param('post', function(request, response, next, id) {
+	var query = Post.findById(id);
+
+	query.exec(function(err, post) {
+		if (err) {
+			return next(err);
+		}
+
+		if (!post) {
+			return next(new Error('Post not found'));
+		}
+
+		request.post = post;
+		return next();
+	});
+
+});
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/', function(request, response, next) {
+  res.render('index', { title: 'Buzz News Feeder' });
 });
 
 /* GET all posts in a JSON list */
@@ -69,26 +97,6 @@ router.post('/posts', function(request, response, next) {
 	});
 });
 
-/* Preload objects - We can use Express's param() function to automatically load an object, rather
-	than duplicating the same code across several different request handler functions. */ 
-
-router.param('post', function(request, response, next, id) {
-	var query = Post.findById(id);
-
-	query.exec(function(err, post) {
-		if (err) {
-			return next(err);
-		}
-
-		if (!post) {
-			return next(new Error('Post not found'));
-		}
-
-		request.post = post;
-		return next();
-	});
-
-});
 
 router.get('/posts/:post', function(request, response) {
 	response.json(request.post);
