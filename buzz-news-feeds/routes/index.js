@@ -102,6 +102,7 @@ router.get('/posts/:post', function(request, response) {
 	response.json(request.post);
 })
 
+/* Upvote a Post */
 router.put('/posts/:post/upvote', function(request, response, next) {
 	request.post.upvote(function(err, post) {
 		if (err) {
@@ -112,13 +113,28 @@ router.put('/posts/:post/upvote', function(request, response, next) {
 	});
 });
 
+/* Create a Comment for a Post */
+router.post('/posts/:post/comments', function(request, response, next) {
+	var comment = new Comment(request.body);
+	comment.post = request.post;
+
+	comment.save(function(err, comment) {
+		if (err) {
+			return next(err);
+		}
+
+		request.post.comments.push(comment);
+		request.post.save(function(err, post) {
+			if (err) {
+				return next(err);
+			}
+
+			response.json(comment);
+		});
+	});
+	
+ });
 
 module.exports = router;
-
-
-
-
-
-
 
 
