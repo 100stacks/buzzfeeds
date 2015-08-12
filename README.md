@@ -9,3 +9,5 @@
 TODO: Add in live blog feed options
 
 TODO: Create an authentication branch
+
+TODO: Create a Bootstrapped version
