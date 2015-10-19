@@ -6,14 +6,14 @@
 
 ## Mongo Angular Express Node Internet Buzz Feeds
 
-* [ ] Add in live blog feed options
+	* Add in live blog feed options
 
-- [ ] Create an authentication branch
+	* Create an authentication branch
 
-- [ ] Create a Bootstrapped version
+	* Create a Bootstrapped version
 
-- [ ] Review RESTful API implementation 
+	* Review RESTful API implementation 
 
-- [ ] Branch Authentication
+	* Branch Authentication
 
-- [ ] Move app folder to main level
+	* Move app folder to main level
