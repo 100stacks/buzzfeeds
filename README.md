@@ -6,7 +6,7 @@
 
 ## Mongo Angular Express Node Internet Buzz Feeds
 
-- [ ] Add in live blog feed options
+* [ ] Add in live blog feed options
 
 - [ ] Create an authentication branch
 
