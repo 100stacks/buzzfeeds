@@ -1,7 +1,7 @@
 # buzzfeeds
 [![Build Status](https://secure.travis-ci.org/100stacks/buzzfeeds.png?branch=master)](http://travis-ci.org/100stacks/buzzfeeds)
 
-[![Dependency Status](https://gemnasium.com/site-demo/buzzfeeds.svg)](https://gemnasium.com/site-demo/buzzfeeds)
+[![Dependency Status](https://gemnasium.com/100stacks/buzzfeeds.svg)](https://gemnasium.com/100stacks/buzzfeeds)
 
 
 ## Mongo Angular Express Node Internet Buzz Feeds
