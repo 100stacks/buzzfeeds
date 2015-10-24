@@ -27,8 +27,6 @@ require('./config/passport');
 
 mongoose.connect('mongodb://localhost/news');
 
-
-
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
