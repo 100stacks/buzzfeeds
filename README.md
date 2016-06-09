@@ -1,5 +1,5 @@
 # buzzfeeds
-[![Build Status](https://secure.travis-ci.org/100stacks/buzzfeeds.png?branch=master)](http://travis-ci.org/100stacks/buzzfeeds)
+![Build Status](https://secure.travis-ci.org/100stacks/buzzfeeds.png?branch=master)
 
 
 ## Mongo Angular Express Node Internet Buzz Feeds
